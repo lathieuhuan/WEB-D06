@@ -11,21 +11,11 @@ handlePageLoad();
 addListeners();
 
 function handlePageLoad() {
-  if (history.state) {
-    if (history.state.length) {
-      render(history.state);
-    } else {
-      userSection.innerHTML = followersList.innerHTML = ``;
-      heading.setAttribute("hidden", true);
-    }
+  const username = new URLSearchParams(location.search).get("username");
+  if (username) {
+    searchAndDisplay(username, true);
   } else {
-    // first time page load
-    const username = new URLSearchParams(location.search).get("username");
-    if (username) {
-      searchAndDisplay(username, true);
-    } else {
-      history.replaceState([], "");
-    }
+    history.replaceState([], "");
   }
 }
 
@@ -38,7 +28,7 @@ function addListeners() {
   });
   searchBtn.addEventListener("mouseup", () => {
     searchBtn.classList.remove("focused");
-    searchAndDisplay(searchInput.value, false);
+    searchAndDisplay(searchInput.value);
     searchInput.value = "";
   });
   searchBtn.addEventListener("mouseleave", () => {
@@ -46,7 +36,7 @@ function addListeners() {
   });
   searchInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
-      searchAndDisplay(searchInput.value, false);
+      searchAndDisplay(searchInput.value);
       searchInput.value = "";
     }
   });
@@ -57,7 +47,14 @@ function addListeners() {
       searchAndDisplay(followerName);
     }
   });
-  window.addEventListener("popstate", handlePageLoad);
+  window.addEventListener("popstate", () => {
+    if (history.state?.length) {
+      render(history.state);
+    } else {
+      userSection.innerHTML = followersList.innerHTML = ``;
+      heading.setAttribute("hidden", true);
+    }
+  });
 }
 
 function searchAndDisplay(name, isFirstTime) {
@@ -82,10 +79,10 @@ function render(data) {
 }
 
 function navigate(data, isFirstTime) {
-  const searchParams = "?username=" + data[0].login;
   if (isFirstTime) {
     history.replaceState(data, "");
   } else {
+    const searchParams = "?username=" + data[0].login;
     history.pushState(data, "", searchParams);
   }
   document.title = "User - " + data[0].login;
