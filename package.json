@@ -1,0 +1,27 @@
+{
+  "name": "web-d06",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lathieuhuan/WEB-D06.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lathieuhuan/WEB-D06/issues"
+  },
+  "homepage": "https://github.com/lathieuhuan/WEB-D06#readme",
+  "dependencies": {
+    "express": "^4.17.3",
+    "express-validator": "^6.14.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
