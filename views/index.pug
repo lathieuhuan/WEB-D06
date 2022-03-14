@@ -1,0 +1,28 @@
+extends layout
+
+append head
+  link(rel='stylesheet', href='/stylesheets/index.css')
+  script(type="module", src="/javascripts/index.js")
+
+block content
+  #top_bar.full-w.flex.justify-end.align-center
+    .flex
+      p
+        span#total 0
+        span VND
+      button.fas.fa-shopping-cart
+  #products.flex-center
+    #shelf
+      each item in products
+        .card_wrapper
+          .card.full-h.flex-col(data-id=item.id)
+            .img_wrapper.flex-center
+              img.full-w(src=item.img, alt=item.name)
+            h3.mt-2= item.name
+            - const priceStr = item.price.toLocaleString().replace(/,/g, ".")
+            p.mt-2 #{priceStr} VND
+            .mt-2.flex
+              button.primary-btn.amount-btn.fas.fa-minus(data-action="decrease")
+              input.amount.full-w(type="number", value="0", min="0", max="100", name=item.id)
+              button.primary-btn.amount-btn.fas.fa-plus(data-action="increase")
+            button.primary-btn.last-btn.disabled.mt-2(name=item.id) THEM VAO GIO

@@ -1,0 +1,28 @@
+extends layout
+
+append head
+  link(rel='stylesheet', href='/stylesheets/checkout.css')
+  script(type="module", src="/javascripts/checkout.js")
+
+block content
+  mixin price(n, id)
+    p.price= n.toLocaleString().replace(/,/g, ".")
+  #checkout.flex-center
+    main.flex-col.align-center
+      .full-w
+        .heading.flex.align-center
+          p.name TEN SAN PHAM
+          p.price GIA TIEN
+          p.amount SO LUONG
+        #list
+          each item in cartItems
+            .line(id=`product_${item.id}`)
+              p.name= item.name
+              +price(item.price)
+              p.amount= item.amount
+              button.primary-btn.remove-btn(name=item.id) XOA
+        .line.bottom
+          p.name TONG CONG
+          - let total = cartItems.reduce((prev, curr) => prev + curr.price * curr.amount, 0)
+          +price(total)
+      button.primary-btn THANH TOAN

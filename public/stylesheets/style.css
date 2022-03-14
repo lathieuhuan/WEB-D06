@@ -1,0 +1,73 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  font: 16px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+:root {
+  --light-blue: #9999ff;
+  --light-orange: #ffcc99;
+  --light-orange-2: #ffb399;
+  --light-gray: rgb(235, 235, 235);
+  --cmn-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  --thin-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px,
+    rgba(0, 0, 0, 0.24) 0px 1px 2px;
+  background-color: var(--light-gray);
+}
+
+button {
+  font-size: 0.875rem;
+}
+button.disabled {
+  background-color: #bdbdbd !important;
+}
+
+button:not(.disabled),
+.pointer {
+  cursor: pointer;
+}
+
+.primary-btn {
+  border: none;
+  font-weight: 700;
+  background-color: var(--light-orange);
+}
+.primary-btn:hover {
+  background-color: var(--light-orange-2);
+}
+
+.full-w {
+  width: 100%;
+}
+.full-h {
+  height: 100%;
+}
+
+.flex,
+.flex-col,
+.flex-center {
+  display: flex;
+}
+.flex-col {
+  flex-direction: column;
+}
+.flex-center,
+.justify-center {
+  justify-content: center;
+}
+.flex-center,
+.align-center {
+  align-items: center;
+}
+.justify-end {
+  justify-content: flex-end;
+}
+
+.mt-2 {
+  margin-top: 0.5rem;
+}

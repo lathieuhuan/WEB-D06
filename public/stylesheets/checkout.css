@@ -1,0 +1,65 @@
+#checkout {
+  min-height: 100vh;
+}
+main {
+  width: 500px;
+  border-radius: 1rem;
+  padding: 1rem;
+  background-color: white;
+  box-shadow: var(--cmn-shadow);
+}
+.line {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: flex-start;
+  border-radius: 0.25rem;
+  padding: 0.5rem;
+  background-color: var(--light-gray);
+  box-shadow: var(--thin-shadow);
+}
+.line:not(.bottom):hover {
+  background-color: var(--light-blue);
+}
+.bottom {
+  background-color: lightgreen;
+  font-weight: 700;
+}
+
+.name {
+  width: 40%;
+}
+.price {
+  width: 20%;
+}
+.amount {
+  width: 15%;
+}
+.remove-btn {
+  width: 25%;
+}
+
+.price,
+.amount {
+  text-align: right;
+}
+.heading > p {
+  text-align: center;
+  font-weight: 700;
+}
+
+main button {
+  border-radius: 0.25rem;
+}
+main > button {
+  margin-top: 1rem;
+}
+
+.line > p {
+  padding: 0.5rem 0.25rem 0.25rem;
+}
+main .primary-btn {
+  padding: 0.5rem 0.5rem 0.25rem;
+}
+.line > .amount {
+  padding-right: 1rem;
+}

@@ -1,0 +1,81 @@
+#top_bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3rem;
+  background: var(--light-blue);
+}
+#top_bar p {
+  font-size: 1.25rem;
+  margin-right: 0.5rem;
+}
+#total {
+  margin-right: 0.25rem;
+}
+#top_bar button {
+  margin-right: 3rem;
+  border: none;
+  background-color: transparent;
+  color: var(--light-orange);
+  font-size: 1.5rem;
+}
+#top_bar button:hover {
+  color: var(--light-orange-2);
+}
+
+#products {
+  min-height: 100vh;
+}
+#shelf {
+  width: 900px;
+  display: flex;
+  flex-wrap: wrap;
+  border-radius: 1rem;
+  padding: 1rem;
+  background-color: white;
+  box-shadow: var(--thin-shadow);
+}
+
+.card_wrapper {
+  width: 25%;
+  padding: 0.5rem;
+}
+.card {
+  padding: 0.75rem;
+  background-color: var(--light-gray);
+  border-radius: 0.5rem;
+  box-shadow: var(--cmn-shadow);
+}
+.card:hover {
+  background-color: var(--light-blue);
+  transform: scale(1.02);
+}
+
+.img_wrapper {
+  height: 70%;
+  background-color: white;
+  border: 3px solid #ffcc99;
+  overflow: hidden;
+}
+input {
+  padding: 0.25rem 0.5rem;
+  font-size: 1.25rem;
+  text-align: center;
+  border: none;
+  outline: none;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.amount-btn {
+  padding: 0.5rem;
+}
+.last-btn {
+  padding: 0.5rem 0.5rem 0.25rem;
+}
