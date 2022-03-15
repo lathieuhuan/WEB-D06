@@ -3,16 +3,16 @@
   padding: 0;
   box-sizing: border-box;
 }
-
 body {
   min-height: 100vh;
   font: 16px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
-
 :root {
   --light-blue: #9999ff;
   --light-orange: #ffcc99;
   --light-orange-2: #ffb399;
+  --light-yellow: #ffe699;
+  --yellow: #ffd84c;
   --light-gray: rgb(235, 235, 235);
   --cmn-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   --thin-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px,
@@ -26,19 +26,69 @@ button {
 button.disabled {
   background-color: #bdbdbd !important;
 }
-
 button:not(.disabled),
 .pointer {
   cursor: pointer;
 }
 
-.primary-btn {
+.primary-btn:not(.fas),
+.secondary-btn {
+  padding: 0.5rem 0.5rem 0.25rem;
+}
+.primary-btn,
+.secondary-btn {
   border: none;
   font-weight: 700;
+}
+.primary-btn {
   background-color: var(--light-orange);
 }
 .primary-btn:hover {
   background-color: var(--light-orange-2);
+}
+.secondary-btn {
+  background-color: var(--light-yellow);
+}
+.secondary-btn:hover {
+  background-color: var(--yellow);
+}
+
+#topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 100%;
+  height: 3rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  background: var(--light-blue);
+}
+#topbar > div {
+  margin-left: 1rem;
+}
+#topbar > div:last-child {
+  margin-right: 3rem;
+}
+#topbar p {
+  font-size: 1.25rem;
+  margin-right: 0.5rem;
+}
+
+#username,
+#sign-io-btn {
+  margin-left: 0.75rem;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(255, 255, 255, 0.6);
 }
 
 .full-w {

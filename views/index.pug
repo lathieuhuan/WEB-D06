@@ -5,12 +5,7 @@ append head
   script(type="module", src="/javascripts/index.js")
 
 block content
-  #top_bar.full-w.flex.justify-end.align-center
-    .flex
-      p
-        span#total 0
-        span VND
-      button.fas.fa-shopping-cart
+  include includes/topbar
   #products.flex-center
     #shelf
       each item in products

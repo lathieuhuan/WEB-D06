@@ -1,55 +1,49 @@
+import { getInpAndBtn, getLiveUserInfo, callApi } from "./utils.js";
 import {
-  getLiveUserInfo,
-  getInpAndBtn,
-  toPriceStr,
-  callApi,
+  addSignInOutListener,
+  addCartSummarizer,
+  renderUsername,
+  renderCart,
+  cart,
+  renderTotal,
+  renderLastBtn,
+  makeSignInForm,
 } from "./helpers.js";
 
-// mo phong nguoi dung da dang nhap
-if (!localStorage.getItem("userInfo")) {
-  localStorage.setItem("userInfo", JSON.stringify({ uid: "A" }));
-}
-
-let total = 0;
-function renderTotal() {
-  document.querySelector("#total").innerHTML = toPriceStr(total);
-}
-
-let cart = [];
 (() => {
+  addSignInOutListener();
   const userInfo = getLiveUserInfo();
   if (!userInfo) return;
+  renderUsername(userInfo);
+  addCartSummarizer();
+  // get cart to render
   callApi("/cart/" + userInfo.uid, "GET")
     .then((res) => {
       if (res.status === 200) return res.json();
-      throw res.status;
+      throw res;
     })
-    .then(({ cartItems }) => {
-      cart = cartItems.map(({ id, amount }) => ({ id, amount }));
-      for (const item of cartItems) {
-        total += item.amount * item.price;
-        const [input, btn] = getInpAndBtn(item.id);
-        input.value = item.amount.toString();
-        btn.innerHTML = "DA THEM";
-      }
-      renderTotal();
-    })
+    .then(({ cartItems }) => renderCart(cartItems))
     .catch((err) => {
-      // xu ly loi
+      // handle error
+      console.log(err);
     });
 })();
 
-// handle button click: tang, giam, them/thay doi
+// handle button click: increase, decrease, add/change
 document.querySelector("#shelf").addEventListener("click", (e) => {
   const card = e.target.closest(".card");
-  const hasClass = (cnam) => e.target.classList.contains(cnam);
+  const hasClass = (cname) => e.target.classList.contains(cname);
   if (card && hasClass("primary-btn")) {
     const id = card.getAttribute("data-id");
     if (hasClass("amount-btn")) {
       const doIncrease = e.target.getAttribute("data-action") === "increase";
       changeInputByAmount(id, doIncrease ? 1 : -1);
     } else if (hasClass("last-btn")) {
-      addOrChange(id);
+      if (getLiveUserInfo()) {
+        addOrChange(id);
+      } else {
+        makeSignInForm();
+      }
     }
   }
 });
@@ -75,44 +69,46 @@ function addOrChange(id) {
   }
 }
 function addNewItem(id, amount, btn) {
-  callApi("/cart", "POST", { userInfo: getLiveUserInfo(), id, amount })
+  const userInfo = getLiveUserInfo();
+  if (!userInfo) return;
+  callApi("/cart", "POST", { userInfo, id, amount })
     .then((res) => {
       if (res.status === 200) return res.json();
       throw res.json();
     })
     .then(({ addAmount }) => {
-      total += addAmount;
       cart.push({ id, amount });
-      renderTotal();
+      renderTotal(addAmount);
       btn.classList.add("disabled");
-      btn.innerHTML = "DA THEM";
+      btn.innerText = "DA THEM";
     })
     .catch((err) => {
-      // xu ly loi
+      // handle error
       console.log(err.message);
     });
 }
 function changeItemAmount(id, amount, itemIndex, btn) {
-  callApi("/cart", "PUT", { userInfo: getLiveUserInfo(), id, amount })
+  const userInfo = getLiveUserInfo();
+  if (!userInfo) return;
+  callApi("/cart", "PUT", { userInfo, id, amount })
     .then((res) => {
       if (res.status === 200) return res.json();
-      throw res.json();
+      throw res;
     })
     .then(({ changeAmount }) => {
-      total += changeAmount;
       if (amount) {
         cart[itemIndex].amount = amount;
-        btn.innerHTML = "DA THAY DOI";
+        btn.innerText = "DA THAY DOI";
       } else {
         cart.splice(itemIndex, 1);
-        btn.innerHTML = "THEM VAO GIO";
+        btn.innerText = "THEM VAO GIO";
       }
-      renderTotal();
+      renderTotal(changeAmount);
       btn.classList.add("disabled");
     })
     .catch((err) => {
-      // xu ly loi
-      console.log(err.message);
+      // handle error
+      console.log(err);
     });
 }
 
@@ -123,38 +119,3 @@ document.querySelectorAll(".amount").forEach((inpElmt) => {
     renderLastBtn(e.target.name, +e.target.value, btn);
   });
 });
-
-//
-document.querySelector(".fa-shopping-cart").addEventListener("click", () => {
-  const userInfo = getLiveUserInfo();
-  if (!userInfo) return;
-  const myForm = document.createElement("FORM");
-  myForm.setAttribute("hidden", "true");
-  myForm.setAttribute("method", "POST");
-  myForm.setAttribute("action", "/checkout");
-  myForm.setAttribute("enctype", "/application/x-www-form-urlencoded");
-  document.body.appendChild(myForm);
-  const myInput = document.createElement("INPUT");
-  myInput.setAttribute("type", "text");
-  myInput.setAttribute("name", "uid");
-  myInput.setAttribute("value", userInfo.uid);
-  myForm.appendChild(myInput);
-  myForm.submit();
-});
-
-// as name
-function renderLastBtn(id, value, btn) {
-  const itemById = cart.find((item) => item.id === id);
-  if (!itemById || itemById.amount !== value) {
-    if (!itemById && !value) {
-      btn.classList.add("disabled");
-    } else {
-      btn.classList.remove("disabled");
-      if (itemById) {
-        btn.innerHTML = "THAY DOI";
-      }
-    }
-  } else if (itemById && itemById.amount === value) {
-    btn.classList.add("disabled");
-  }
-}

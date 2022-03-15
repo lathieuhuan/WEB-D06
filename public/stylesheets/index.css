@@ -1,26 +1,14 @@
-#top_bar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 3rem;
-  background: var(--light-blue);
-}
-#top_bar p {
-  font-size: 1.25rem;
-  margin-right: 0.5rem;
-}
 #total {
   margin-right: 0.25rem;
 }
-#top_bar button {
-  margin-right: 3rem;
+#cart_summarizer button {
   border: none;
   background-color: transparent;
-  color: var(--light-orange);
+  color: var(--light-yellow);
   font-size: 1.5rem;
 }
-#top_bar button:hover {
-  color: var(--light-orange-2);
+#cart_summarizer button:hover {
+  color: var(--yellow);
 }
 
 #products {
@@ -54,7 +42,7 @@
 .img_wrapper {
   height: 70%;
   background-color: white;
-  border: 3px solid #ffcc99;
+  border: 3px solid var(--light-orange);
   overflow: hidden;
 }
 input {
@@ -76,6 +64,13 @@ input[type="number"] {
 .amount-btn {
   padding: 0.5rem;
 }
-.last-btn {
-  padding: 0.5rem 0.5rem 0.25rem;
+
+.modal_content {
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  background-color: var(--light-blue);
+  box-shadow: var(--cmn-shadow);
+}
+.modal_content > button {
+  margin-top: 1rem;
 }

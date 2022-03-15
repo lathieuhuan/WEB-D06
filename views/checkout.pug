@@ -5,8 +5,9 @@ append head
   script(type="module", src="/javascripts/checkout.js")
 
 block content
-  mixin price(n, id)
+  mixin price(n)
     p.price= n.toLocaleString().replace(/,/g, ".")
+  include includes/topbar
   #checkout.flex-center
     main.flex-col.align-center
       .full-w
@@ -23,6 +24,6 @@ block content
               button.primary-btn.remove-btn(name=item.id) XOA
         .line.bottom
           p.name TONG CONG
-          - let total = cartItems.reduce((prev, curr) => prev + curr.price * curr.amount, 0)
-          +price(total)
-      button.primary-btn THANH TOAN
+          - let totalAmount = cartItems.reduce((prev, curr) => prev + curr.price * curr.amount, 0)
+          +price(totalAmount)
+      button(class=`secondary-btn${cartItems.lenght ? "" : " disabled"}`) THANH TOAN
