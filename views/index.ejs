@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <%- include("layouts/header") -%>
+  <header class="masthead" style="background-image: url('/img/contact-bg.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="page-heading">
+            <h1>MINDX DBP-WEB-D06</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <body>
+    <%- include("layouts/navbar") -%>
+    <div class="container">
+      <% posts.forEach(function(post) { %>
+      <div>
+        <img
+          src="data:image/<%=post.image.contentType%>;base64,
+            <%=post.image.data.toString('base64')%>"
+          alt="<%=post.image.name%>"
+        />
+        <div>
+          <h5><%= post.title %></h5>
+          <p><%= post.body %></p>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+    <%- include("layouts/footer") -%> <%- include("layouts/scripts") -%>
+  </body>
+</html>
