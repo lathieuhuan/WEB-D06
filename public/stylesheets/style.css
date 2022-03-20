@@ -1,3 +1,8 @@
-#preview-image > img {
+#preview-image > img,
+.post-img {
   width: 10rem;
+}
+.post-title > span {
+  font-size: 1rem;
+  line-height: normal !important;
 }

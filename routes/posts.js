@@ -8,9 +8,7 @@ router.get("/new", (_, res) => {
 
 router.post("/store", upload, (req, res) => {
   PostModel.create({ ...req.body }, (err) => {
-    if (err) {
-      console.log(err);
-    }
+    if (err) console.log(err);
     res.redirect("/");
   });
 });

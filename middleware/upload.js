@@ -3,7 +3,8 @@ const fs = require("fs");
 
 function upload(req, res, next) {
   if (!req.files || Object.keys(req.files).length === 0) {
-    // No files were uploaded.
+    console.log("No files were uploaded.");
+    return next();
   }
   const image = req.files.image;
   const imgPath = path.join(__dirname, "..", "public", "upload", image.name);
