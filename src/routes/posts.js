@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const PostModel = require("../model/post.model");
+const PostModel = require("../models/post.model");
 const upload = require("../middleware/upload");
 
 router.get("/new", (_, res) => {

@@ -12,7 +12,6 @@ const PostSchema = new mongoose.Schema({
     name: String,
     contentType: String,
     data: Buffer,
-    // desc: String,
   },
 });
 

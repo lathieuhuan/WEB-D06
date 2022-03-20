@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <%- include("layouts/head") -%>
+  <body>
+    <%- include("layouts/navbar") -%> <%- include("layouts/header", { heading:
+    "MINDX DBP-WEB-D06" }) -%>
+
+    <div class="container d-flex flex-column align-items-center">
+      <% posts.forEach(({ image, title, body, datePosted }) => { %>
+      <div class="d-flex flex-column">
+        <% if (image.data) { %>
+        <img
+          class="post-img mx-auto"
+          src="data:image/<%=image.contentType%>;base64,<%=image.data.toString('base64')%>"
+          alt="<%=image.name%>"
+        />
+        <% } %>
+        <div class="mt-3">
+          <div class="post-title d-flex">
+            <h5 class="mr-2"><%= title %></h5>
+            <span class="mt-1 text-secondary">
+              - <%= [datePosted.getDate(), datePosted.getMonth() + 1,
+              datePosted.getFullYear()].join("/") + " " +
+              datePosted.toLocaleTimeString() %>
+            </span>
+          </div>
+          <p><%= body %></p>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+    <%- include("layouts/footer") -%> <%- include("layouts/scripts") -%>
+  </body>
+</html>
