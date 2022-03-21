@@ -1,0 +1,31 @@
+#preview-image > img,
+.post-img {
+  width: 10rem;
+}
+.post-title > span {
+  font-size: 1rem;
+  line-height: normal !important;
+}
+
+#error {
+  color: var(--danger);
+  font-weight: 700;
+}
+
+@media only screen and (min-width: 992px) {
+  #mainNav .navbar-nav > li.nav-item > a,
+  #mainNav .navbar-brand {
+    color: var(--yellow);
+  }
+  #mainNav .navbar-nav > li.nav-item > a:hover,
+  #mainNav .navbar-brand:hover {
+    color: var(--red);
+  }
+}
+
+.author {
+  color: var(--info);
+}
+.text-end {
+  text-align: end;
+}

@@ -1,15 +1,22 @@
 const jwt = require("jsonwebtoken");
+const secretKey = "yeKterces";
 
-function generate(info, expiresIn) {
-  return new Promise((res) => {
-    jwt.sign(info, "yek", { expiresIn }, (err, token) => {
-      if (err) {
-        console.log(err);
-        res(undefined);
-      }
+function generate(info, expiresIn = "7d") {
+  return new Promise((res, rej) => {
+    jwt.sign(info, secretKey, { expiresIn }, (err, token) => {
+      if (err) rej(err);
       res(token);
     });
   });
 }
 
-module.exports = { generate };
+function verify(token) {
+  return new Promise((res, rej) => {
+    jwt.verify(token, secretKey, (err, decoded) => {
+      if (err) rej(err);
+      else res(decoded);
+    });
+  });
+}
+
+module.exports = { generate, verify };

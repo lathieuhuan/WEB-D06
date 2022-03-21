@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('layouts/head'); -%>
+
+  <body>
+    <%- include('layouts/navbar'); -%> <%- include('layouts/header', { heading:
+    "Login" }) -%>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <form
+            id="login-form"
+            action="/users/login"
+            method="POST"
+            enctype="application/x-www-form-urlencoded"
+          >
+            <% [ { text: "Email", type: "email" }, { text: "Password", type:
+            "password" }, ].forEach(({ text, type }) => { %>
+            <div class="control-group">
+              <div class="form-group floating-label-form-group controls">
+                <label><%= text %></label>
+                <input
+                  type="<%= type %>"
+                  class="form-control"
+                  placeholder="<%= text %>"
+                  id="<%= text.toLowerCase() %>"
+                  name="<%= text.toLowerCase() %>"
+                  required
+                />
+              </div>
+            </div>
+            <% }) %>
+            <p id="error"></p>
+            <br />
+            <div class="form-group">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                id="sendMessageButton"
+              >
+                Send
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <hr />
+    <script></script>
+    <%- include('layouts/footer'); -%> <%- include('layouts/scripts'); -%>
+  </body>
+</html>

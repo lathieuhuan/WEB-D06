@@ -6,7 +6,7 @@
     "MINDX DBP-WEB-D06" }) -%>
 
     <div class="container d-flex flex-column align-items-center">
-      <% posts.forEach(({ image, title, body, datePosted }) => { %>
+      <% posts.forEach(({ image, title, datePosted, body, author }) => { %>
       <div class="d-flex flex-column">
         <% if (image.data) { %>
         <img
@@ -25,6 +25,7 @@
             </span>
           </div>
           <p><%= body %></p>
+          <p class="author text-end"><b>- <%= author %></b></p>
         </div>
       </div>
       <% }) %>
