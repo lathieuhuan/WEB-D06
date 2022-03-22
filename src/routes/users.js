@@ -16,7 +16,7 @@ router.post("/new", async (req, res) => {
   const userInfo = {
     username,
     email,
-    password: await bcrypt.hash(password),
+    password,
   };
   try {
     const token = await jwt.generate({ username });

@@ -9,13 +9,17 @@ function upload(req, res, next) {
   const image = req.files.image;
   const imgPath = path.join(__dirname, "../../public/upload", image.name);
   image.mv(imgPath, (err) => {
-    if (err) return res.status(500).send(err);
-    req.body.image = {
-      name: image.name,
-      contentType: image.mimetype,
-      data: fs.readFileSync(imgPath),
-    };
-    return next();
+    if (err) {
+      console.log(err);
+      res.sendStatus(500);
+    } else {
+      req.body.image = {
+        name: image.name,
+        contentType: image.mimetype,
+        data: fs.readFileSync(imgPath),
+      };
+      return next();
+    }
   });
 }
 
