@@ -13,7 +13,7 @@
         const newPost = document.querySelector("#new-post");
         newPost.removeAttribute("hidden");
         const account = document.querySelector("#account");
-        account.href = "/users/" + username;
+        account.href = "users/profile/" + username;
         account.innerText = username;
         const logBtn = document.querySelector("#log-in-out");
         logBtn.href = "";
@@ -49,24 +49,12 @@
       password: loginForm.password.value,
     };
     callApi("/users/login", "POST", loginInfo)
-      .then((res) => {
-        if (res.status === 200) {
-          return res.json();
-        }
-        throw res.status;
+      .then(async (res) => {
+        const data = await res.json();
+        return { status: res.status, ...data };
       })
-      .then(({ token }) => {
-        localStorage.setItem("token", token);
-        location.assign("/");
-      })
-      .catch((err) => {
-        const error = document.querySelector("#error");
-        if (err === 401) {
-          error.innerText = "Sai mat khau";
-        } else if (err === 404) {
-          error.innerText = "Tai khoan khong ton tai";
-        }
-      });
+      .then((res) => handleResponse(res, "login"))
+      .catch((err) => console.log(err));
   });
 
   const registerForm = document.querySelector("#register-form");
@@ -78,20 +66,23 @@
       password: registerForm.password.value,
     };
     callApi("/users/new", "POST", userInfo)
-      .then((res) => {
-        if (res.status === 200) {
-          return res.json();
-        }
-        throw res.status;
+      .then(async (res) => {
+        const data = await res.json();
+        return { status: res.status, ...data };
       })
-      .then(({ token }) => {
-        localStorage.setItem("token", token);
-        location.assign("/");
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+      .then((res) => handleResponse(res, "register"))
+      .catch((err) => console.log(err));
   });
+
+  function handleResponse(res, type) {
+    if (res.status === 200) {
+      localStorage.setItem("token", res.token);
+      location.assign("/");
+    } else if ([400, 401, 404].includes(res.status)) {
+      const error = document.querySelector(`#${type}-error`);
+      error.innerHTML = res.errors.join("<br>");
+    }
+  }
 
   const postForm = document.querySelector("#post-form");
   if (postForm && token) {
@@ -102,6 +93,29 @@
     postForm.appendChild(textarea);
   }
 
+  document.querySelector("#filter-input")?.addEventListener("input", (e) => {
+    const userList = document.querySelector("#users-list");
+    for (const elmt of [...userList.children]) {
+      const username = elmt.getAttribute("data-name").toLowerCase();
+      if (username.startsWith(e.target.value.toLowerCase())) {
+        elmt.classList.replace("d-none", "d-flex");
+      } else {
+        elmt.classList.replace("d-flex", "d-none");
+      }
+    }
+  });
+
+  document.querySelector("#users-list")?.addEventListener("click", (e) => {
+    const username = e.target.getAttribute("data-name");
+    const token = localStorage.getItem("token");
+    if (username) {
+      const _id = e.target.getAttribute("data-uid");
+      callApi(`/users/search/${_id}`, "POST", { token })
+        .then((res) => res.json())
+        .then((res) => console.log(res));
+    }
+  });
+
   async function callApi(endpoint, method = "GET", reqData = {}, params) {
     const settings = { method };
     if (method !== "GET") {
@@ -109,6 +123,8 @@
       settings.headers = {
         "Content-Type": "application/json",
       };
+    } else if (method === "GET") {
+      settings.headers = reqData;
     }
     return await fetch(
       `http://localhost:3000${endpoint}${params ? "?" + params : ""}`,

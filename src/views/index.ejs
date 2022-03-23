@@ -7,12 +7,12 @@
 
     <div class="container d-flex flex-column align-items-center">
       <% posts.forEach(({ image, title, datePosted, body, author }) => { %>
-      <div class="d-flex flex-column">
-        <% if (image.data) { %>
+      <div class="post d-flex flex-column">
+        <% if (image) { %>
         <img
           class="post-img mx-auto"
-          src="data:image/<%=image.contentType%>;base64,<%=image.data.toString('base64')%>"
-          alt="<%=image.name%>"
+          src="upload/<%= image %>"
+          alt="<%= image %>"
         />
         <% } %>
         <div class="mt-3">
@@ -25,7 +25,7 @@
             </span>
           </div>
           <p><%= body %></p>
-          <p class="author text-end"><b>- <%= author %></b></p>
+          <p class="author text-end"><b><%= author %></b></p>
         </div>
       </div>
       <% }) %>

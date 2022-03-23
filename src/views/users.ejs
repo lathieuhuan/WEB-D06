@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <%- include("layouts/head") -%>
+  <body>
+    <%- include("layouts/navbar") -%> <%- include("layouts/header", { heading:
+    "SEARCH USERS" }) -%>
+
+    <div class="container d-flex flex-column align-items-center">
+      <input
+        id="filter-input"
+        class="px-3 py-2"
+        placeholder="Filter usernames"
+      />
+      <div id="users-list" class="d-flex flex-column">
+        <% users.forEach(({ _id, username, email }) => { %>
+        <div class="d-flex" data-uid="<%= _id %>" data-name="<%= username %>">
+          <p>Username: <%= username %></p>
+          <p class="mx-3 divider"></p>
+          <p>Email: <%= email %></p>
+        </div>
+        <% }) %>
+      </div>
+    </div>
+    <%- include("layouts/footer") -%> <%- include("layouts/scripts") -%>
+  </body>
+</html>

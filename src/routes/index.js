@@ -6,8 +6,10 @@ const PostModel = require("../models/post.model");
 
 router.get("/", (_, res) => {
   PostModel.find({}, (err, posts) => {
-    if (err) res.sendStatus(500);
-    else res.render("index", { posts });
+    if (err) return res.sendStatus(500);
+    else {
+      res.render("index", { posts });
+    }
   });
 });
 

@@ -1,3 +1,8 @@
+.post {
+  margin-bottom: 1rem;
+  border-bottom: 2px solid black;
+  width: 60%;
+}
 #preview-image > img,
 .post-img {
   width: 10rem;
@@ -6,8 +11,32 @@
   font-size: 1rem;
   line-height: normal !important;
 }
+.author {
+  color: var(--info);
+}
 
-#error {
+#users-list {
+  min-height: 500px;
+  width: 80%;
+}
+#users-list p {
+  margin: 16px 0;
+}
+#users-list > div {
+  margin-top: 0.5rem;
+  padding: 0 1.5rem;
+}
+#users-list > div:hover {
+  background-color: var(--red);
+  color: white;
+}
+.divider {
+  width: 2px;
+  background: var(--gray);
+}
+
+.error {
+  margin: 0 0 1.5rem;
   color: var(--danger);
   font-weight: 700;
 }
@@ -23,9 +52,6 @@
   }
 }
 
-.author {
-  color: var(--info);
-}
 .text-end {
   text-align: end;
 }
