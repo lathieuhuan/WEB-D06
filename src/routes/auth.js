@@ -10,7 +10,7 @@ router.get("/login", (_, res) => {
 });
 
 router.post("/check-token", checkToken, (req, res) => {
-  res.send({ username: req.body.username });
+  res.send({ username: req.body.username, uid: req.body.uid });
 });
 
 module.exports = router;

@@ -3,17 +3,15 @@
   if (token) {
     callApi("/auth/check-token", "POST", { token })
       .then((res) => {
-        if (res.status === 200) {
-          return res.json();
-        }
+        if (res.status === 200) return res.json();
         throw res;
       })
-      .then(({ username }) => {
+      .then(({ username, uid }) => {
         // render login
         const newPost = document.querySelector("#new-post");
         newPost.removeAttribute("hidden");
         const account = document.querySelector("#account");
-        account.href = "users/profile/" + username;
+        account.href = "profile/" + uid;
         account.innerText = username;
         const logBtn = document.querySelector("#log-in-out");
         logBtn.href = "";
