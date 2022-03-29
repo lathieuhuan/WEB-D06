@@ -9,4 +9,11 @@ router.post("/login", validate.validateUserLogin, ctrl.login);
 
 router.get("/profile", checkToken, ctrl.getProfile);
 
+router.put(
+  "/profile",
+  checkToken,
+  validate.validateUserUpdate,
+  ctrl.updateProfile
+);
+
 module.exports = router;

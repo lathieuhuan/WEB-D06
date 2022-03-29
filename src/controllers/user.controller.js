@@ -57,4 +57,23 @@ const getProfile = async (req, res) => {
   }
 };
 
-module.exports = { register, login, getProfile };
+const updateProfile = async (req, res) => {
+  const reqInfo = {};
+  for (const type of ["newName", "newEmail", "newPassword"]) {
+    if (req.body[type]) {
+      reqInfo[type.slice(3).toLowerCase()] = req.body[type];
+    }
+  }
+  if (reqInfo.password) {
+    reqInfo.password = await bcrypt.hash(reqInfo.password);
+  }
+  const newInfo = await UserModel.findOneAndUpdate(
+    { _id: req.body._id },
+    { ...reqInfo },
+    { returnOriginal: false }
+  );
+  const { password, ...resInfo } = newInfo._doc;
+  return res.send({ resInfo });
+};
+
+module.exports = { register, login, getProfile, updateProfile };
