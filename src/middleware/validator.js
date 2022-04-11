@@ -1,9 +1,8 @@
 const Joi = require("joi");
-const { badRequest } = require("../utils/errorMaker");
 
-const joiName = Joi.string().min(4).max(12);
+const joiName = Joi.string().min(4).max(16);
 const joiEmail = Joi.string().email();
-const joiPwd = Joi.string().min(4).max(16);
+const joiPwd = Joi.string().min(4).max(22);
 
 const validateUserRegister = async (req, res, next) => {
   const schema = Joi.object({
@@ -13,9 +12,9 @@ const validateUserRegister = async (req, res, next) => {
   });
   try {
     await schema.validateAsync(req.body);
-    return next();
-  } catch (err) {
-    return badRequest(res, err);
+    next();
+  } catch (error) {
+    next(error);
   }
 };
 
@@ -26,25 +25,32 @@ const validateUserLogin = async (req, res, next) => {
   });
   try {
     await schema.validateAsync(req.body);
-    return next();
-  } catch (err) {
-    console.log(err);
-    return badRequest(res, err);
+    next();
+  } catch (error) {
+    next(error);
   }
 };
 
 const validateUserUpdate = async (req, res, next) => {
-  const { newName, newEmail, newPassword } = req.body;
   const schema = Joi.object({
-    newName: joiName,
-    newEmail: joiEmail,
-    newPassword: joiPwd,
+    name: joiName,
+    email: joiEmail,
+    password: joiPwd,
   }).min(1);
   try {
-    await schema.validateAsync({ newName, newEmail, newPassword });
-    return next();
-  } catch (err) {
-    return badRequest(res, err);
+    await schema.validateAsync(req.body);
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+const validateGetUserById = async (req, res, next) => {
+  try {
+    await Joi.object({ _id: Joi.string().required() }).validateAsync(req.body);
+    next();
+  } catch (error) {
+    next(error);
   }
 };
 
@@ -52,4 +58,5 @@ module.exports = {
   validateUserRegister,
   validateUserLogin,
   validateUserUpdate,
+  validateGetUserById,
 };

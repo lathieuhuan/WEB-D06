@@ -1,79 +1,146 @@
 const UserModel = require("../models/user.model");
 const jwt = require("../utils/jwt");
 const bcrypt = require("../utils/bcrypt");
-const { systemError } = require("../utils/errorMaker");
 
-const register = async (req, res) => {
+const register = async (req, res, next) => {
   const { name, email, password } = req.body;
   const existedUser = await UserModel.findOne({ email });
   if (existedUser) {
-    return res.status(400).send({ errors: ["Email da duoc su dung."] });
+    return next({ code: 400, msg: "Email da dc su dung." });
   }
   const userInfo = { name, email, password };
   try {
     const user = await UserModel.create(userInfo);
-    const token = await jwt.generate({ name, _id: user._id });
-    return res.send({ token });
-  } catch (err) {
-    console.log(err);
-    return systemError(res);
+    const token = await jwt.generate({ _id: user._id, name });
+    res.send({ token });
+  } catch (error) {
+    next(error);
   }
 };
 
-const login = async (req, res) => {
+const login = async (req, res, next) => {
   const { email, password } = req.body;
   try {
     const existedUser = await UserModel.findOne({ email });
     if (!existedUser) {
-      throw 404;
+      return next({ code: 400, msg: "Tai khoan khong ton tai." });
     }
     const pwdCorrect = await bcrypt.compare(password, existedUser.password);
     if (!pwdCorrect) {
-      throw 401;
+      return next({ code: 401, msg: "Sai mat khau." });
     }
     const token = await jwt.generate({
-      name: existedUser.name,
       _id: existedUser._id,
+      name: existedUser.name,
     });
-    return res.send({ token });
-  } catch (err) {
-    if (err === 401) {
-      return res.status(err).send({ errors: [`Sai mat khau.`] });
-    } else if (err === 404) {
-      return res.status(err).send({ errors: [`Tai khoan khong ton tai.`] });
-    }
-    console.log(err);
-    return systemError(res);
+    res.send({ name: existedUser.name, token });
+  } catch (error) {
+    next(error);
   }
 };
 
-const getProfile = async (req, res) => {
+const getAllUsers = async (req, res, next) => {
   try {
-    const { name, email, _id } = await UserModel.findById(req.body._id);
-    res.send({ name, email, _id });
-  } catch (err) {
-    console.log(err);
-    return systemError(res);
+    const users = await UserModel.find({});
+    res.send(users);
+  } catch (error) {
+    next(error);
   }
 };
 
-const updateProfile = async (req, res) => {
-  const reqInfo = {};
-  for (const type of ["newName", "newEmail", "newPassword"]) {
-    if (req.body[type]) {
-      reqInfo[type.slice(3).toLowerCase()] = req.body[type];
+const getProfile = async (req, res, next) => {
+  try {
+    const user = await UserModel.findById(res.locals._id);
+    if (!user) {
+      return next({ code: 404 });
+    }
+    const { _id, name, email, isAdmin } = user;
+    res.send({ _id, name, email, isAdmin });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateProfile = async (req, res, next) => {
+  try {
+    const reqInfo = await getUpdateReqInfo(req.body);
+    const newInfo = await UserModel.findOneAndUpdate(
+      { _id: res.locals._id },
+      { ...reqInfo },
+      { returnOriginal: false }
+    );
+    if (!newInfo) {
+      return next({ code: 404 });
+    }
+    const { password, ...resInfo } = newInfo._doc;
+    res.send({ resInfo });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const deleteUser = async (req, res, next) => {
+  try {
+    const user = await UserModel.findByIdAndDelete(req.params._id);
+    if (!user) {
+      return next({ code: 404 });
+    }
+    res.send({ msg: `Da xoa nguoi dung ${user.name}.` });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getUserById = async (req, res, next) => {
+  try {
+    const user = await UserModel.findById(req.params._id);
+    if (!user) {
+      return next({ code: 404 });
+    }
+    res.send(user);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateUserById = async (req, res, next) => {
+  try {
+    const reqInfo = await getUpdateReqInfo(req.body);
+    const newInfo = await UserModel.findOneAndUpdate(
+      { _id: req.params._id },
+      { ...reqInfo },
+      { returnOriginal: false }
+    );
+    if (!newInfo) {
+      return next({ code: 404 });
+    }
+    const { password, ...resInfo } = newInfo._doc;
+    res.send({ resInfo });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = {
+  register,
+  login,
+  getAllUsers,
+  getProfile,
+  updateProfile,
+  deleteUser,
+  getUserById,
+  updateUserById,
+};
+
+async function getUpdateReqInfo(reqBody) {
+  const result = {};
+  for (const field of ["name", "email", "password"]) {
+    if (reqBody[field]) {
+      result[field] = reqBody[field];
     }
   }
-  if (reqInfo.password) {
-    reqInfo.password = await bcrypt.hash(reqInfo.password);
+  if (result.password) {
+    result.password = await bcrypt.hash(result.password);
   }
-  const newInfo = await UserModel.findOneAndUpdate(
-    { _id: req.body._id },
-    { ...reqInfo },
-    { returnOriginal: false }
-  );
-  const { password, ...resInfo } = newInfo._doc;
-  return res.send({ resInfo });
-};
-
-module.exports = { register, login, getProfile, updateProfile };
+  return result;
+}
