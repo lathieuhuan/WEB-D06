@@ -15,8 +15,8 @@ const errorHandler = (err, req, res, next) => {
     };
     res.status(code).send({ error: msg || defaultError[code] });
   } else {
-    // res.status(500).send({ error: "Loi he thong." });
-    res.status(500).send({ error: err });
+    console.log(err);
+    res.status(500).send({ error: "Loi he thong." });
   }
 };
 

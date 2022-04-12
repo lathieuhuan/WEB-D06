@@ -2,9 +2,11 @@ const UserModel = require("../models/user.model");
 const jwt = require("../utils/jwt");
 const bcrypt = require("../utils/bcrypt");
 
+const projection = "name email isAdmin";
+
 const register = async (req, res, next) => {
   const { name, email, password } = req.body;
-  const existedUser = await UserModel.findOne({ email });
+  const existedUser = await UserModel.findOne({ email }).lean();
   if (existedUser) {
     return next({ code: 400, msg: "Email da dc su dung." });
   }
@@ -21,7 +23,7 @@ const register = async (req, res, next) => {
 const login = async (req, res, next) => {
   const { email, password } = req.body;
   try {
-    const existedUser = await UserModel.findOne({ email });
+    const existedUser = await UserModel.findOne({ email }).lean();
     if (!existedUser) {
       return next({ code: 400, msg: "Tai khoan khong ton tai." });
     }
@@ -41,7 +43,7 @@ const login = async (req, res, next) => {
 
 const getAllUsers = async (req, res, next) => {
   try {
-    const users = await UserModel.find({});
+    const users = await UserModel.find(null, projection).lean();
     res.send(users);
   } catch (error) {
     next(error);
@@ -50,12 +52,11 @@ const getAllUsers = async (req, res, next) => {
 
 const getProfile = async (req, res, next) => {
   try {
-    const user = await UserModel.findById(res.locals._id);
+    const user = await UserModel.findById(res.locals._id, projection).lean();
     if (!user) {
       return next({ code: 404 });
     }
-    const { _id, name, email, isAdmin } = user;
-    res.send({ _id, name, email, isAdmin });
+    res.send(user);
   } catch (error) {
     next(error);
   }
@@ -63,17 +64,18 @@ const getProfile = async (req, res, next) => {
 
 const updateProfile = async (req, res, next) => {
   try {
-    const reqInfo = await getUpdateReqInfo(req.body);
-    const newInfo = await UserModel.findOneAndUpdate(
-      { _id: res.locals._id },
-      { ...reqInfo },
-      { returnOriginal: false }
+    if (req.body.password) {
+      req.body.password = await bcrypt.hash(req.body.password);
+    }
+    const resInfo = await UserModel.findByIdAndUpdate(
+      res.locals._id,
+      { ...req.body },
+      { new: true, lean: true, projection }
     );
-    if (!newInfo) {
+    if (!resInfo) {
       return next({ code: 404 });
     }
-    const { password, ...resInfo } = newInfo._doc;
-    res.send({ resInfo });
+    res.send(resInfo);
   } catch (error) {
     next(error);
   }
@@ -81,7 +83,7 @@ const updateProfile = async (req, res, next) => {
 
 const deleteUser = async (req, res, next) => {
   try {
-    const user = await UserModel.findByIdAndDelete(req.params._id);
+    const user = await UserModel.findByIdAndDelete(req.params._id).lean();
     if (!user) {
       return next({ code: 404 });
     }
@@ -93,7 +95,7 @@ const deleteUser = async (req, res, next) => {
 
 const getUserById = async (req, res, next) => {
   try {
-    const user = await UserModel.findById(req.params._id);
+    const user = await UserModel.findById(req.params._id, projection).lean();
     if (!user) {
       return next({ code: 404 });
     }
@@ -105,17 +107,18 @@ const getUserById = async (req, res, next) => {
 
 const updateUserById = async (req, res, next) => {
   try {
-    const reqInfo = await getUpdateReqInfo(req.body);
-    const newInfo = await UserModel.findOneAndUpdate(
-      { _id: req.params._id },
-      { ...reqInfo },
-      { returnOriginal: false }
+    if (req.body.password) {
+      req.body.password = await bcrypt.hash(req.body.password);
+    }
+    const resInfo = await UserModel.findByIdAndUpdate(
+      req.params._id,
+      { ...req.body },
+      { new: true, lean: true, projection }
     );
-    if (!newInfo) {
+    if (!resInfo) {
       return next({ code: 404 });
     }
-    const { password, ...resInfo } = newInfo._doc;
-    res.send({ resInfo });
+    res.send(resInfo);
   } catch (error) {
     next(error);
   }
@@ -131,16 +134,3 @@ module.exports = {
   getUserById,
   updateUserById,
 };
-
-async function getUpdateReqInfo(reqBody) {
-  const result = {};
-  for (const field of ["name", "email", "password"]) {
-    if (reqBody[field]) {
-      result[field] = reqBody[field];
-    }
-  }
-  if (result.password) {
-    result.password = await bcrypt.hash(result.password);
-  }
-  return result;
-}

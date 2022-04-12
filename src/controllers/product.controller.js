@@ -57,7 +57,7 @@ const createReview = async (req, res, next) => {
     });
     product.numReviews = product.reviews.length;
     const total = product.reviews.reduce((prev, curr) => prev + curr.rating, 0);
-    product.rating = Math.round((total / product.numReviews) * 10) / 10;
+    product.rating = total / product.numReviews;
 
     await product.save();
     res.status(200).send({ message: "Review thanh cong." });
@@ -66,4 +66,58 @@ const createReview = async (req, res, next) => {
   }
 };
 
-module.exports = { getProducts, createProduct, createReview };
+const getProductById = async (req, res, next) => {
+  const product = await ProductModel.findById(req.params.id);
+  if (product) {
+    res.send(product);
+  } else {
+    next({ code: 404 });
+  }
+};
+
+const deleteProductById = async (req, res, next) => {
+  try {
+    const product = await ProductModel.findByIdAndDelete(req.params.id).lean();
+    if (!product) {
+      return next({ code: 404 });
+    }
+    res.send({ msg: `Da xoa ${product.name}.` });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateProductById = async (req, res, next) => {
+  try {
+    const resInfo = await ProductModel.findByIdAndUpdate(
+      req.params.id,
+      { ...req.body },
+      { new: true, lean: true }
+    );
+    if (!resInfo) {
+      return next({ code: 404 });
+    }
+    res.send(resInfo);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getTopProducts = async (req, res, next) => {
+  try {
+    const list = await ProductModel.find().sort({ numReviews: -1 }).limit(3);
+    res.send(list);
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = {
+  getProducts,
+  createProduct,
+  createReview,
+  getProductById,
+  deleteProductById,
+  updateProductById,
+  getTopProducts,
+};
