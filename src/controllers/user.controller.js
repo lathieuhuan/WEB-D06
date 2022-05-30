@@ -14,7 +14,7 @@ const register = async (req, res, next) => {
   try {
     const user = await UserModel.create(userInfo);
     const token = await jwt.generate({ _id: user._id, name });
-    res.send({ token });
+    res.send({ name, token });
   } catch (error) {
     next(error);
   }
@@ -56,7 +56,8 @@ const getProfile = async (req, res, next) => {
     if (!user) {
       return next({ code: 404 });
     }
-    res.send(user);
+    const token = await jwt.generate({ _id: user._id, name: user.name });
+    res.send({ ...user, token });
   } catch (error) {
     next(error);
   }
@@ -69,7 +70,7 @@ const updateProfile = async (req, res, next) => {
     }
     const resInfo = await UserModel.findByIdAndUpdate(
       res.locals._id,
-      { ...req.body },
+      req.body,
       { new: true, lean: true, projection }
     );
     if (!resInfo) {
@@ -112,7 +113,7 @@ const updateUserById = async (req, res, next) => {
     }
     const resInfo = await UserModel.findByIdAndUpdate(
       req.params._id,
-      { ...req.body },
+      req.body,
       { new: true, lean: true, projection }
     );
     if (!resInfo) {

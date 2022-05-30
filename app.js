@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const connectDB = require("./config/db");
 const { errorHandler } = require("./src/middleware/error");
+const cors = require("cors");
 
 const indexRouter = require("./src/routes/index");
 const usersRouter = require("./src/routes/users");
@@ -24,14 +25,15 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "https://oh5g7u.csb.app");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  next();
-});
+app.use(cors({ origin: "https://7zgrx4.csb.app" }));
+// app.use((req, res, next) => {
+//   res.header("Access-Control-Allow-Origin", "https://oh5g7u.csb.app");
+//   res.header(
+//     "Access-Control-Allow-Headers",
+//     "Origin, X-Requested-With, Content-Type, Accept"
+//   );
+//   next();
+// });
 
 app.use("/", indexRouter);
 app.use("/api/users", usersRouter);

@@ -1,16 +1,51 @@
 const ProductModel = require("../models/product.model");
+const { productCategories } = require("../configs/syncWithFE");
 
-const getProducts = async (req, res, next) => {
-  const pageSize = 10;
-  const page = +req.query.pageNumber || 1;
-  const keyword = req.query.keyword
-    ? { name: { regex: req.query.keyword } }
-    : {};
-  const countProducts = await ProductModel.countDocuments({ ...keyword });
-  const products = await ProductModel.find({ ...keyword })
-    .limit(pageSize)
-    .skip(pageSize * (page - 1));
-  res.send({ products, page, countProducts });
+const projection = "name image category rating numReviews price";
+
+// const projection = {
+//   home: ["name", "image", "category", "rating", "numReviews", "price"],
+//   category: ["brand"],
+//   details: ["description", "reviews"],
+// };
+
+const getProductsForHome = async (req, res, next) => {
+  try {
+    const pageSize = 10;
+    const page = +req.query.pageNumber || 1;
+    const keyword = req.query.keyword
+      ? { name: { regex: req.query.keyword } }
+      : {};
+    const productCount = await ProductModel.countDocuments({ ...keyword });
+    const products = await ProductModel.find({ ...keyword }, projection)
+      .limit(pageSize)
+      .skip(pageSize * (page - 1));
+    res.send({ products, page, productCount });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getProductsForCategory = async (req, res, next) => {
+  try {
+    const pageSize = 10;
+    const page = +req.query.pageNumber || 1;
+    const category = productCategories[req.params.category];
+    if (!category) {
+      return next({
+        code: 404,
+        msg: `Category ${req.params.category} is not found.`,
+      });
+    }
+    const productCount = await ProductModel.countDocuments({ category });
+    const thisProjection = projection + " brand";
+    const products = await ProductModel.find({ category }, thisProjection)
+      .limit(pageSize)
+      .skip(pageSize * (page - 1));
+    res.send({ products, page, productCount });
+  } catch (error) {
+    next(error);
+  }
 };
 
 const createProduct = async (req, res, next) => {
@@ -113,7 +148,8 @@ const getTopProducts = async (req, res, next) => {
 };
 
 module.exports = {
-  getProducts,
+  getProductsForHome,
+  getProductsForCategory,
   createProduct,
   createReview,
   getProductById,

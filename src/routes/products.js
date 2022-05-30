@@ -1,9 +1,10 @@
 const router = require("express").Router();
 const ctrl = require("../controllers/product.controller");
-const validate = require("../middleware/validator");
 const { checkToken, checkAdmin } = require("../middleware/auth");
 
-router.get("/", ctrl.getProducts);
+router.get("/", ctrl.getProductsForHome);
+
+router.get("/category/:category", ctrl.getProductsForCategory);
 
 router.post("/", checkToken, checkAdmin, ctrl.createProduct);
 
